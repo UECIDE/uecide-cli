@@ -28,5 +28,7 @@ class Varcmd {
 #include <vc/lc.hpp>
 #include <vc/math.hpp>
 #include <vc/onefile.hpp>
+#include <vc/preproc.hpp>
+#include <vc/programmer.hpp>
 
 #endif

@@ -31,7 +31,7 @@ class File {
         bool canWrite();
         int  compareTo(File &f);
         bool createNewFile();
-        static File createTempFile(std::string &prefix, std::string &suffix);
+        static File createTempFile(std::string prefix, std::string suffix);
 //        static File createTempFile(std::string &prefix, std::string &suffix, File &where);
         bool deleteFile();
 //        void deleteOnExit();

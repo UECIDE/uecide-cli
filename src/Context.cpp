@@ -36,6 +36,8 @@ Context::Context() {
     varcmdList["lc"] = &createInstance<vc_lc>;
     varcmdList["math"] = &createInstance<vc_math>;
     varcmdList["onefile"] = &createInstance<vc_onefile>;
+
+    _settings = &_liveSettings;
 }
 
 void Context::setProgrammer(Programmer &programmer) {
@@ -71,11 +73,11 @@ Compiler &Context::getCompiler() {
 }
 
 void Context::set(std::string key, std::string val) {
-    _settings.set(key, val);
+    _settings->set(key, val);
 }
 
 std::string Context::get(std::string key) {
-    return _settings.get(key);
+    return _settings->get(key);
 }
 
 PropertyFile Context::getMerged() {
@@ -84,7 +86,7 @@ PropertyFile Context::getMerged() {
     if (_compiler != &noCompiler) pf.mergeData(_compiler->getProperties().getProperties());
     if (_core != &noCore) pf.mergeData(_core->getProperties().getProperties());
     if (_board != &noBoard) pf.mergeData(_board->getProperties().getProperties());
-    pf.mergeData(_settings);
+    pf.mergeData(*_settings);
     return pf;
 }
 
@@ -94,7 +96,7 @@ std::string Context::getMerged(std::string key) {
     if (_compiler != &noCompiler) pf.mergeData(_compiler->getProperties().getProperties());
     if (_core != &noCore) pf.mergeData(_core->getProperties().getProperties());
     if (_board != &noBoard) pf.mergeData(_board->getProperties().getProperties());
-    pf.mergeData(_settings);
+    pf.mergeData(*_settings);
     return pf.get(key);
 }
 
@@ -204,5 +206,13 @@ std::string Context::runFunctionVariable(std::string command, std::string param)
     }
     delete vc;
     return ret;
+}
+
+void Context::snapshot() {
+    _settings = &_backupSettings;
+}
+
+void Context::restore() {
+    _settings = &_liveSettings;
 }
 

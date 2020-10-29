@@ -107,7 +107,8 @@ am_uecide_cli_OBJECTS = uecide-cli.$(OBJEXT) File.$(OBJEXT) \
 	vc_csv.$(OBJEXT) vc_env.$(OBJEXT) vc_exec.$(OBJEXT) \
 	vc_exists.$(OBJEXT) vc_files.$(OBJEXT) vc_find.$(OBJEXT) \
 	vc_foreach.$(OBJEXT) vc_if.$(OBJEXT) vc_join.$(OBJEXT) \
-	vc_lc.$(OBJEXT) vc_math.$(OBJEXT) vc_onefile.$(OBJEXT)
+	vc_lc.$(OBJEXT) vc_math.$(OBJEXT) vc_onefile.$(OBJEXT) \
+	vc_preproc.$(OBJEXT) vc_programmer.$(OBJEXT)
 uecide_cli_OBJECTS = $(am_uecide_cli_OBJECTS)
 uecide_cli_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -252,7 +253,8 @@ uecide_cli_SOURCES = uecide-cli.cpp File.cpp PropertyFile.cpp \
 	Context.cpp vc_basename.cpp vc_board.cpp vc_char.cpp \
 	vc_compiler.cpp vc_core.cpp vc_csv.cpp vc_env.cpp vc_exec.cpp \
 	vc_exists.cpp vc_files.cpp vc_find.cpp vc_foreach.cpp \
-	vc_if.cpp vc_join.cpp vc_lc.cpp vc_math.cpp vc_onefile.cpp
+	vc_if.cpp vc_join.cpp vc_lc.cpp vc_math.cpp vc_onefile.cpp \
+	vc_preproc.cpp vc_programmer.cpp
 @DEBUG_FALSE@AM_CFLAGS = -I../include
 @DEBUG_TRUE@AM_CFLAGS = -ggdb3 -DDEBUG -I../include
 @DEBUG_FALSE@AM_CXXFLAGS = -I../include

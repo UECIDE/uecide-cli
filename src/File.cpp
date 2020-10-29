@@ -194,7 +194,7 @@ bool File::createNewFile() {
     return true;
 }
 
-File File::createTempFile(std::string &prefix, std::string &suffix) {
+File File::createTempFile(std::string prefix, std::string suffix) {
 
 #if defined(__linux__) || defined(__APPLE__)
 

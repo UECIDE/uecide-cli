@@ -17,7 +17,9 @@ class Context {
         Core *_core = &noCore;
         Compiler *_compiler = &noCompiler;
 
-        PropertyFile _settings;
+        PropertyFile *_settings;
+        PropertyFile _liveSettings;
+        PropertyFile _backupSettings;
 
     public:
 
@@ -56,6 +58,9 @@ class Context {
         std::string parseString(std::string str);
 
         std::string runFunctionVariable(std::string command, std::string arg);
+
+        void snapshot();
+        void restore();
 };
 
 #endif
