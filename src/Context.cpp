@@ -4,9 +4,13 @@
 
 #include <Context.hpp>
 #include <Varcmd.hpp>
+#include <BuiltinCommand.hpp>
 
 std::map<std::string, Varcmd *(*)()> varcmdList;
-template<typename T> Varcmd * createInstance() { return new T; }
+template<typename T> Varcmd * createVarcmd() { return new T; }
+
+std::map<std::string, BuiltinCommand *(*)()> builtinList;
+template<typename T> BuiltinCommand * createBuiltinCommand() { return new T; }
 
 static std::vector<std::string> makeArgList(std::string args) {
     std::vector<std::string> out;
@@ -19,26 +23,31 @@ static std::vector<std::string> makeArgList(std::string args) {
 }
 
 Context::Context() {
-    varcmdList["basename"] = &createInstance<vc_basename>;
-    varcmdList["board"] = &createInstance<vc_board>;
-    varcmdList["char"] = &createInstance<vc_char>;
-    varcmdList["compiler"] = &createInstance<vc_compiler>;
-    varcmdList["core"] = &createInstance<vc_core>;
-    varcmdList["csv"] = &createInstance<vc_csv>;
-    varcmdList["env"] = &createInstance<vc_env>;
-    varcmdList["exec"] = &createInstance<vc_exec>;
-    varcmdList["exists"] = &createInstance<vc_exists>;
-    varcmdList["files"] = &createInstance<vc_files>;
-    varcmdList["find"] = &createInstance<vc_find>;
-    varcmdList["foreach"] = &createInstance<vc_foreach>;
-    varcmdList["if"] = &createInstance<vc_if>;
-    varcmdList["join"] = &createInstance<vc_join>;
-    varcmdList["lc"] = &createInstance<vc_lc>;
-    varcmdList["math"] = &createInstance<vc_math>;
-    varcmdList["onefile"] = &createInstance<vc_onefile>;
-    varcmdList["preproc"] = &createInstance<vc_preproc>;
-    varcmdList["programmer"] = &createInstance<vc_programmer>;
-    varcmdList["random"] = &createInstance<vc_random>;
+    varcmdList["basename"] = &createVarcmd<vc_basename>;
+    varcmdList["board"] = &createVarcmd<vc_board>;
+    varcmdList["char"] = &createVarcmd<vc_char>;
+    varcmdList["compiler"] = &createVarcmd<vc_compiler>;
+    varcmdList["core"] = &createVarcmd<vc_core>;
+    varcmdList["csv"] = &createVarcmd<vc_csv>;
+    varcmdList["env"] = &createVarcmd<vc_env>;
+    varcmdList["exec"] = &createVarcmd<vc_exec>;
+    varcmdList["exists"] = &createVarcmd<vc_exists>;
+    varcmdList["files"] = &createVarcmd<vc_files>;
+    varcmdList["find"] = &createVarcmd<vc_find>;
+    varcmdList["foreach"] = &createVarcmd<vc_foreach>;
+    varcmdList["if"] = &createVarcmd<vc_if>;
+    varcmdList["join"] = &createVarcmd<vc_join>;
+    varcmdList["lc"] = &createVarcmd<vc_lc>;
+    varcmdList["math"] = &createVarcmd<vc_math>;
+    varcmdList["onefile"] = &createVarcmd<vc_onefile>;
+    varcmdList["preproc"] = &createVarcmd<vc_preproc>;
+    varcmdList["programmer"] = &createVarcmd<vc_programmer>;
+    varcmdList["random"] = &createVarcmd<vc_random>;
+
+    builtinList["append"] = &createBuiltinCommand<bc_append>;
+    builtinList["bullet"] = &createBuiltinCommand<bc_bullet>;
+    builtinList["bullet2"] = &createBuiltinCommand<bc_bullet2>;
+    builtinList["bullet3"] = &createBuiltinCommand<bc_bullet3>;
 
     _settings = &_liveSettings;
 }
@@ -208,6 +217,18 @@ std::string Context::runFunctionVariable(std::string command, std::string param)
         error(vc->usage());
     }
     delete vc;
+    return ret;
+}
+
+bool Context::runBuiltinCommand(std::string command, std::string param) {
+    if (builtinList.find("__builtin_" + command) == builtinList.end()) {
+        error("Command " + command + " not found");
+        return false;
+    }
+    std::vector<std::string> args = makeArgList(param);
+    BuiltinCommand *bc = builtinList[command]();
+    bool ret = bc->main(this, args);
+    delete bc;
     return ret;
 }
 
