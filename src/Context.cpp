@@ -36,6 +36,9 @@ Context::Context() {
     varcmdList["lc"] = &createInstance<vc_lc>;
     varcmdList["math"] = &createInstance<vc_math>;
     varcmdList["onefile"] = &createInstance<vc_onefile>;
+    varcmdList["preproc"] = &createInstance<vc_preproc>;
+    varcmdList["programmer"] = &createInstance<vc_programmer>;
+    varcmdList["random"] = &createInstance<vc_random>;
 
     _settings = &_liveSettings;
 }
@@ -209,6 +212,8 @@ std::string Context::runFunctionVariable(std::string command, std::string param)
 }
 
 void Context::snapshot() {
+    _backupSettings.clear();
+    _backupSettings.mergeData(_liveSettings);
     _settings = &_backupSettings;
 }
 

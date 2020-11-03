@@ -74,6 +74,7 @@ class PropertyFile {
         std::vector<std::string> childKeysOf(std::string path);
 
         void dump();
+        void clear();
             
 };
 

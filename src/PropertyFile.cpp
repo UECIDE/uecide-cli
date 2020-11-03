@@ -318,3 +318,7 @@ std::vector<std::string> PropertyFile::childKeysOf(std::string path) {
 void PropertyFile::loadProperties(File f) {
     loadProperties(&properties, &f);
 }
+
+void PropertyFile::clear() {
+    properties.clear();
+}
