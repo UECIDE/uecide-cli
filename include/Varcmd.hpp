@@ -30,5 +30,6 @@ class Varcmd {
 #include <vc/onefile.hpp>
 #include <vc/preproc.hpp>
 #include <vc/programmer.hpp>
+#include <vc/random.hpp>
 
 #endif
