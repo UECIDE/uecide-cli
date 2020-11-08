@@ -58,6 +58,7 @@ class Context {
         std::string parseString(std::string str);
 
         std::string runFunctionVariable(std::string command, std::string arg);
+        bool runBuiltinCommand(std::string command, std::string arg);
 
         void snapshot();
         void restore();

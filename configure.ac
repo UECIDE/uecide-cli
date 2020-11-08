@@ -7,21 +7,7 @@ AC_CONFIG_MACRO_DIR([m4])
 
 AM_SILENT_RULES([yes])
 
-#AC_SEARCH_LIBS(mcrypt_module_open, mcrypt,[], [
-#    AC_MSG_ERROR([libmcrypt-dev is needed])
-#])
-#
-#AC_SEARCH_LIBS(mhash_keygen, mhash,[], [
-#    AC_MSG_ERROR([libmhash-dev is needed])
-#])
-#
-#AC_SEARCH_LIBS(curl_global_init, curl, [], [
-#    AC_MSG_ERROR([libcurl4-*-dev is needed])
-#])
-#
-##AC_SEARCH_LIBS(json_tokener_parse, json-c, [], [
-#    AC_MSG_ERROR([libjson-c-dev is needed])
-#])
+AC_CCACHE
 
 AC_ARG_ENABLE(debug,
 AS_HELP_STRING([--enable-debug],
