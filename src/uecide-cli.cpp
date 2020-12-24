@@ -19,9 +19,15 @@
 
 PropertyFile Preferences;
 
+int debug = 0;
+
+#define OPT_BOARD               0x1001
+#define OPT_DATADIR             0x1002
+
 static struct option long_options[] = {
-    {"board",           required_argument, 0, 'b'},
-    {"datadir",         required_argument, 0, 'd'},
+    {"debug",		    no_argument,       &debug, 1},
+    {"board",           required_argument, NULL,    OPT_BOARD},
+    {"datadir",         required_argument, NULL,    OPT_DATADIR},
     {0, 0, 0, 0},
 };
 
@@ -33,34 +39,33 @@ class Config {
     public:
         Config(int argc, char **argv) {
             int optind = 0;
-            while (int opt = getopt_long(argc, argv, "d:b:", long_options, &optind) >= 0) {
+            while (int opt = getopt_long(argc, argv, "", long_options, &optind) >= 0) {
                 std::cout << "Option: " << opt << " at index " << optind << std::endl;
-                switch (opt) {
-                    case 0:
-                        // Nothing to do for flags
-                        break;
 
-                    case 1:
-                        switch (optind) {
-                            case 0:
-                                board = optarg;
-                                break;
-                        
-                            case 1:
-                                datadir = optarg;
-                                break;
-                        }
-                        break;
+                if (opt != 1) {
+                    std::cout << "Bad option " << opt << std::endl;
+                    continue;
+                }
 
-                    case 'b':
-                        board = optarg;
-                        break;
-                
-                    case 'd':
-                        datadir = optarg;
-                        break;
+                if (opt == 1) {
+                    if (long_options[optind].flag != 0) {
+                        std::cout << "Doing nothing for flag option" << std::endl;
+                        continue;
+                    }
+
+                    switch (long_options[optind].val) {
+                        case OPT_BOARD:
+                            board = optarg;
+                            break;
+                    
+                        case OPT_DATADIR:
+                            datadir = optarg;
+                            break;
+                    }
                 }
             }
+
+            printf("Debug level: %d\n", debug);
 
             if (datadir == "") {
 #if defined(__linux__)
