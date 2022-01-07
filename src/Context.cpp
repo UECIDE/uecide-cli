@@ -52,6 +52,7 @@ Context::Context() {
     builtinList["cp"] = &createBuiltinCommand<bc_cp>;
     builtinList["delay"] = &createBuiltinCommand<bc_delay>;
     builtinList["dot"] = &createBuiltinCommand<bc_dot>;
+    builtinList["echo"] = &createBuiltinCommand<bc_cout>;
 
     _settings = &_liveSettings;
 }

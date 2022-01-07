@@ -18,7 +18,6 @@ class BuiltinCommand {
 #include <bc/cp.hpp>
 #include <bc/delay.hpp>
 #include <bc/dot.hpp>
-#include <bc/echo.hpp>
 #include <bc/end_buffer.hpp>
 #include <bc/error.hpp>
 #include <bc/exec.hpp>
