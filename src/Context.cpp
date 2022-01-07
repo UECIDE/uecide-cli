@@ -2,15 +2,32 @@
 #include <iostream>
 #include <sstream>
 
+#include <pstream.h>
+
 #include <Context.hpp>
 #include <Varcmd.hpp>
 #include <BuiltinCommand.hpp>
+
+std::ostringstream buffer;
+bool buffered = false;
 
 std::map<std::string, Varcmd *(*)()> varcmdList;
 template<typename T> Varcmd * createVarcmd() { return new T; }
 
 std::map<std::string, BuiltinCommand *(*)()> builtinList;
 template<typename T> BuiltinCommand * createBuiltinCommand() { return new T; }
+
+static std::vector<std::string> splitString(std::string in, std::string delim) {
+    std::vector<std::string> out;
+    size_t pos = in.find(delim);
+    while (pos != std::string::npos) {
+        std::string left = in.substr(0, pos);
+        out.push_back(left);
+        std::string right = in.substr(pos + delim.length(), in.length());
+        pos = right.find(delim);
+    }
+    return out;
+}
 
 static std::vector<std::string> makeArgList(std::string args) {
     std::vector<std::string> out;
@@ -44,15 +61,15 @@ Context::Context() {
     varcmdList["programmer"] = &createVarcmd<vc_programmer>;
     varcmdList["random"] = &createVarcmd<vc_random>;
 
-    builtinList["append"] = &createBuiltinCommand<bc_append>;
-    builtinList["bullet"] = &createBuiltinCommand<bc_bullet>;
-    builtinList["bullet2"] = &createBuiltinCommand<bc_bullet2>;
-    builtinList["bullet3"] = &createBuiltinCommand<bc_bullet3>;
-    builtinList["cout"] = &createBuiltinCommand<bc_cout>;
-    builtinList["cp"] = &createBuiltinCommand<bc_cp>;
-    builtinList["delay"] = &createBuiltinCommand<bc_delay>;
-    builtinList["dot"] = &createBuiltinCommand<bc_dot>;
-    builtinList["echo"] = &createBuiltinCommand<bc_cout>;
+    builtinList["__builtin_append"] = &createBuiltinCommand<bc_append>;
+    builtinList["__builtin_bullet"] = &createBuiltinCommand<bc_bullet>;
+    builtinList["__builtin_bullet2"] = &createBuiltinCommand<bc_bullet2>;
+    builtinList["__builtin_bullet3"] = &createBuiltinCommand<bc_bullet3>;
+    builtinList["__builtin_cout"] = &createBuiltinCommand<bc_cout>;
+    builtinList["__builtin_cp"] = &createBuiltinCommand<bc_cp>;
+    builtinList["__builtin_delay"] = &createBuiltinCommand<bc_delay>;
+    builtinList["__builtin_dot"] = &createBuiltinCommand<bc_dot>;
+    builtinList["__builtin_echo"] = &createBuiltinCommand<bc_cout>;
 
     _settings = &_liveSettings;
 }
@@ -164,7 +181,7 @@ bool Context::executeKey(std::string key) {
     }
 
     if (props.keyExists(key)) {
-        return executeCommand(parseString(props.get(key)), parseString(props.get(key + ".environment")));
+        return executeCommand(parseString(props.get(key)), parseString(props.get(key + ".environment")), false);
     }
 
     return false;
@@ -174,7 +191,12 @@ bool Context::executeUScript(std::string key) {
     return false;
 }
 
-bool Context::executeCommand(std::string command, std::string env) {
+bool Context::executeCommand(std::string command, std::string env, bool silent = false) {
+    if (command.find("__builtin_") == 0) {
+        return runBuiltinCommand(command, silent);
+    } else {
+        return runSystemCommand(command, env, silent);
+    }
     return false;
 }
 
@@ -225,12 +247,16 @@ std::string Context::runFunctionVariable(std::string command, std::string param)
     return ret;
 }
 
-bool Context::runBuiltinCommand(std::string command, std::string param) {
-    if (builtinList.find("__builtin_" + command) == builtinList.end()) {
-        error("Command " + command + " not found");
+bool Context::runBuiltinCommand(std::string command, bool silent) {
+    std::vector<std::string> args = splitString(command, "::");
+
+    std::string cmdname = args[0];
+    args.erase(args.begin());
+
+    if (builtinList.find(cmdname) == builtinList.end()) {
+        error("Command " + cmdname + " not found");
         return false;
     }
-    std::vector<std::string> args = makeArgList(param);
     BuiltinCommand *bc = builtinList[command]();
     bool ret = bc->main(this, args);
     delete bc;
@@ -247,3 +273,20 @@ void Context::restore() {
     _settings = &_liveSettings;
 }
 
+void Context::startBuffer() {
+    buffer.str("");
+    buffered = true;
+}
+
+std::string Context::endBuffer() {
+    buffered = false;
+    return buffer.str();
+}
+    
+bool Context::runSystemCommand(std::string command, std::string env, bool silent = false) {
+    std::vector<std::string> args = splitString(command, "::");
+
+    redi::ipstream in(args[0], args);
+
+    return false;
+}

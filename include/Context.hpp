@@ -53,15 +53,19 @@ class Context {
 
         bool executeKey(std::string key);
         bool executeUScript(std::string key);
-        bool executeCommand(std::string command, std::string env);
+        bool executeCommand(std::string command, std::string env, bool silent);
 
         std::string parseString(std::string str);
 
         std::string runFunctionVariable(std::string command, std::string arg);
-        bool runBuiltinCommand(std::string command, std::string arg);
+        bool runBuiltinCommand(std::string command, bool silent);
+        bool runSystemCommand(std::string command, std::string env, bool silent);
 
         void snapshot();
         void restore();
+
+        void startBuffer();
+        std::string endBuffer();
 };
 
 #endif
