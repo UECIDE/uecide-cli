@@ -48,6 +48,8 @@ Context::Context() {
     builtinList["bullet"] = &createBuiltinCommand<bc_bullet>;
     builtinList["bullet2"] = &createBuiltinCommand<bc_bullet2>;
     builtinList["bullet3"] = &createBuiltinCommand<bc_bullet3>;
+    builtinList["cout"] = &createBuiltinCommand<bc_cout>;
+    builtinList["cp"] = &createBuiltinCommand<bc_cp>;
 
     _settings = &_liveSettings;
 }
